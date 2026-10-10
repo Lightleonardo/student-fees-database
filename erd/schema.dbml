@@ -1,0 +1,48 @@
+// Student Fees Database ERD
+// Import this at dbdiagram.io and export as PNG to erd/schema.png
+
+Table students {
+  student_id      integer [primary key, increment]
+  full_name       text [not null]
+  email           text [not null, unique]
+  enrollment_date text [not null]
+  status          text [not null, default: 'active']
+}
+
+Table fee_types {
+  fee_type_id     integer [primary key, increment]
+  name            text [not null, unique]
+  description     text
+  default_amount  numeric [not null, note: 'CHECK (default_amount >= 0)']
+}
+
+Table invoices {
+  invoice_id      integer [primary key, increment]
+  student_id      integer [not null, ref: > students.student_id]
+  fee_type_id     integer [not null, ref: > fee_types.fee_type_id]
+  amount_due      numeric [not null, note: 'CHECK (amount_due >= 0)']
+  issue_date      text [not null]
+  due_date        text [not null]
+  status          text [not null, default: 'open']
+}
+
+Table discounts {
+  discount_id     integer [primary key, increment]
+  invoice_id      integer [not null, ref: > invoices.invoice_id]
+  description     text [not null]
+  amount          numeric [not null, note: 'CHECK (amount >= 0)']
+}
+
+Table payments {
+  payment_id      integer [primary key, increment]
+  invoice_id      integer [not null, ref: > invoices.invoice_id]
+  amount_paid     numeric [not null, note: 'CHECK (amount_paid > 0)']
+  payment_date    text [not null]
+  method          text [not null]
+}
+
+// Note: Indexes are not shown in dbdiagram.io DSL but are defined in schema.sql
+// CREATE INDEX idx_invoices_student_id ON invoices(student_id);
+// CREATE INDEX idx_invoices_due_date   ON invoices(due_date);
+// CREATE INDEX idx_payments_invoice_id ON payments(invoice_id);
+// CREATE INDEX idx_discounts_invoice_id ON discounts(invoice_id);
