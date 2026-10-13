@@ -1,3 +1,4 @@
 *.db-journal
 __pycache__/
 *.log
+*.docx
