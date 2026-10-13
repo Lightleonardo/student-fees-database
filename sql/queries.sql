@@ -82,11 +82,13 @@ LEFT JOIN (
 WHERE COALESCE(inv_totals.total_due, 0) - COALESCE(disc_totals.total_discount, 0) - COALESCE(pay_totals.total_paid, 0) > 0;
 
 -- 6. Students with no payments at all
-SELECT DISTINCT s.student_id, s.full_name, s.email
+SELECT s.student_id, s.full_name, s.email
 FROM students s
-LEFT JOIN invoices i ON i.student_id = s.student_id
-LEFT JOIN payments p ON p.invoice_id = i.invoice_id
-WHERE p.payment_id IS NULL;
+WHERE NOT EXISTS (
+    SELECT 1 FROM invoices i
+    JOIN payments p ON p.invoice_id = i.invoice_id
+    WHERE i.student_id = s.student_id
+);
 
 -- 7a. Total discounts given overall
 SELECT SUM(amount) AS total_discounts

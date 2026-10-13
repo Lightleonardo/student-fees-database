@@ -1,0 +1,15 @@
+digraph ERD {
+    rankdir=LR;
+    node [shape=record, fontname="Arial"];
+    
+    students [label="{students|student_id (PK)\nfull_name\nemail (UNIQUE)\nenrollment_date\nstatus}"];
+    fee_types [label="{fee_types|fee_type_id (PK)\nname (UNIQUE)\ndescription\ndefault_amount}"];
+    invoices [label="{invoices|invoice_id (PK)\nstudent_id (FK)\nfee_type_id (FK)\namount_due\nissue_date\ndue_date\nstatus}"];
+    discounts [label="{discounts|discount_id (PK)\ninvoice_id (FK)\ndescription\namount}"];
+    payments [label="{payments|payment_id (PK)\ninvoice_id (FK)\namount_paid\npayment_date\nmethod}"];
+    
+    students -> invoices [label="1:N", dir=both, arrowtail=crow];
+    fee_types -> invoices [label="1:N", dir=both, arrowtail=crow];
+    invoices -> discounts [label="1:N", dir=both, arrowtail=crow];
+    invoices -> payments [label="1:N", dir=both, arrowtail=crow];
+}

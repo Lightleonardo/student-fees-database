@@ -174,20 +174,18 @@ WHERE COALESCE(inv_totals.total_due, 0) - COALESCE(disc_totals.total_discount, 0
 
 ```sql
 -- 6. Students with no payments at all
-SELECT DISTINCT s.student_id, s.full_name, s.email
+SELECT s.student_id, s.full_name, s.email
 FROM students s
-LEFT JOIN invoices i ON i.student_id = s.student_id
-LEFT JOIN payments p ON p.invoice_id = i.invoice_id
-WHERE p.payment_id IS NULL;
+WHERE NOT EXISTS (
+    SELECT 1 FROM invoices i
+    JOIN payments p ON p.invoice_id = i.invoice_id
+    WHERE i.student_id = s.student_id
+);
 ```
 
 | student_id | full_name | email |
 | --- | --- | --- |
-| 1 | Ada Obi | ada.obi@example.com |
-| 2 | Bello Musa | bello.musa@example.com |
 | 3 | Chinwe Okonkwo | chinwe.okonkwo@example.com |
-| 4 | David Adebayo | david.adebayo@example.com |
-| 5 | Efe Okafor | efe.okafor@example.com |
 | 7 | Grace Nwosu | grace.nwosu@example.com |
 | 8 | Hassan Ibrahim | hassan.ibrahim@example.com |
 
